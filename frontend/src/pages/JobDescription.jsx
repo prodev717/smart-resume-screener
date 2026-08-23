@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-const API_URL = import.meta.env.VITE_BACKEND_URL + "/api/job-descriptions";
+const API_URL = (import.meta.env.VITE_BACKEND_URL || "http://localhost:3000") + "/api/job-descriptions";
 
 function JobDescriptions() {
   const [text, setText] = useState("");
@@ -163,22 +163,21 @@ function JobDescriptions() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-10">
-      <div className="mx-auto max-w-6xl">
+    <div className="mx-auto max-w-[1240px]">
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Job Descriptions
+          <h1 className="text-4xl font-extrabold tracking-[-0.06em] text-[#15222c] sm:text-5xl">
+            Role library
           </h1>
 
-          <p className="mt-2 text-gray-500">
-            Create and manage structured job descriptions.
+          <p className="mt-3 text-sm leading-6 text-[#718087]">
+            Turn role context into structured signals your team can screen against.
           </p>
         </div>
 
         {/* Create */}
-        <div className="mb-8 rounded-xl bg-white p-6 shadow-sm">
+        <div className="mb-8 border border-[#e1e4dd] bg-[#fbfbf7] p-6 sm:p-8">
           <h2 className="mb-4 text-lg font-semibold">
             Create Job Description
           </h2>
@@ -188,14 +187,14 @@ function JobDescriptions() {
             onChange={(e) => setText(e.target.value)}
             placeholder="Paste the job description here..."
             rows={8}
-            className="w-full resize-none rounded-lg border border-gray-300 p-4 text-sm outline-none focus:border-black focus:ring-1 focus:ring-black"
+            className="w-full resize-none rounded-lg border border-[#d9dfd8] bg-white p-4 text-sm outline-none focus:border-[#9fca4e] focus:ring-2 focus:ring-[#c8f36a]/40"
           />
 
           <div className="mt-4 flex items-center gap-4">
             <button
               onClick={createJob}
               disabled={loading}
-              className="rounded-lg bg-black px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-800 disabled:opacity-50"
+              className="rounded-lg bg-[#15222c] px-5 py-2.5 text-sm font-bold text-white hover:bg-[#273944] disabled:opacity-50"
             >
               {loading ? "Processing..." : "Analyze JD"}
             </button>
@@ -211,7 +210,7 @@ function JobDescriptions() {
         <div className="grid gap-6 lg:grid-cols-2">
 
           {/* List */}
-          <div className="rounded-xl bg-white p-6 shadow-sm">
+          <div className="border border-[#e1e4dd] bg-[#fbfbf7] p-6 sm:p-8">
             <div className="mb-5 flex items-center justify-between">
               <h2 className="text-lg font-semibold">
                 Saved Job Descriptions
@@ -276,7 +275,7 @@ function JobDescriptions() {
           </div>
 
           {/* Details / Edit */}
-          <div className="rounded-xl bg-white p-6 shadow-sm">
+          <div className="border border-[#e1e4dd] bg-[#fbfbf7] p-6 sm:p-8">
             <h2 className="mb-5 text-lg font-semibold">
               Job Details
             </h2>
@@ -303,12 +302,12 @@ function JobDescriptions() {
                   value={editText}
                   onChange={(e) => setEditText(e.target.value)}
                   rows={18}
-                  className="w-full resize-none rounded-lg border border-gray-300 bg-gray-50 p-4 font-mono text-xs outline-none focus:border-black focus:ring-1 focus:ring-black"
+                  className="w-full resize-none rounded-lg border border-[#d9dfd8] bg-white p-4 font-mono text-xs outline-none focus:border-[#9fca4e] focus:ring-2 focus:ring-[#c8f36a]/40"
                 />
 
                 <button
                   onClick={updateJob}
-                  className="mt-4 w-full rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-800"
+                  className="mt-4 w-full rounded-lg bg-[#15222c] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#273944]"
                 >
                   Save Changes
                 </button>
@@ -316,7 +315,6 @@ function JobDescriptions() {
             )}
           </div>
         </div>
-      </div>
     </div>
   );
 }

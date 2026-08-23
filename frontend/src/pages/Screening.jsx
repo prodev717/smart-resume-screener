@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 
-const SCREENING_API = import.meta.env.VITE_BACKEND_URL + "/api/screenings";
-const RESUME_API = import.meta.env.VITE_BACKEND_URL + "/api/resumes";
-const JD_API = import.meta.env.VITE_BACKEND_URL + "/api/job-descriptions";
+const API_BASE = import.meta.env.VITE_BACKEND_URL || "http://localhost:3000";
+const SCREENING_API = API_BASE + "/api/screenings";
+const RESUME_API = API_BASE + "/api/resumes";
+const JD_API = API_BASE + "/api/job-descriptions";
 
 function Screenings() {
   const [screenings, setScreenings] = useState([]);
@@ -201,22 +202,22 @@ function Screenings() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 px-6 py-10">
-      <div className="mx-auto max-w-6xl">
+    <div className="mx-auto max-w-[1240px]">
+      <div>
 
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">
-            Resume Screening
+          <h1 className="text-4xl font-extrabold tracking-[-0.06em] text-[#15222c] sm:text-5xl">
+            Screening workspace
           </h1>
 
-          <p className="mt-2 text-gray-500">
+          <p className="mt-3 text-sm leading-6 text-[#718087]">
             Compare resumes against job descriptions using AI.
           </p>
         </div>
 
         {/* Create Screening */}
-        <div className="mb-8 rounded-xl bg-white p-6 shadow-sm">
+        <div className="mb-8 border border-[#e1e4dd] bg-[#fbfbf7] p-6 sm:p-8">
           <h2 className="mb-5 text-lg font-semibold">
             Start Screening
           </h2>
@@ -232,7 +233,7 @@ function Screenings() {
               <select
                 value={resumeId}
                 onChange={(e) => setResumeId(e.target.value)}
-                className="w-full rounded-lg border border-gray-300 bg-white px-3 py-2.5 text-sm outline-none focus:border-black"
+                              className="w-full rounded-lg border border-[#d9dfd8] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#9fca4e] focus:ring-2 focus:ring-[#c8f36a]/40"
               >
                 <option value="">Select a resume</option>
 
@@ -272,7 +273,7 @@ function Screenings() {
           <button
             onClick={createScreening}
             disabled={loading}
-            className="mt-5 rounded-lg bg-black px-5 py-2.5 text-sm font-medium text-white hover:bg-gray-800 disabled:cursor-not-allowed disabled:opacity-50"
+              className="mt-5 rounded-lg bg-[#15222c] px-5 py-2.5 text-sm font-bold text-white hover:bg-[#273944] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Screening..." : "Run AI Screening"}
           </button>
@@ -287,7 +288,7 @@ function Screenings() {
         <div className="grid gap-6 lg:grid-cols-2">
 
           {/* Screening List */}
-          <div className="rounded-xl bg-white p-6 shadow-sm">
+            <div className="border border-[#e1e4dd] bg-[#fbfbf7] p-6 sm:p-8">
 
             <div className="mb-5 flex items-center justify-between">
               <h2 className="text-lg font-semibold">
@@ -311,7 +312,7 @@ function Screenings() {
                   setResumeId(e.target.value);
                   setTimeout(fetchScreenings, 0);
                 }}
-                className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                              className="rounded-lg border border-[#d9dfd8] bg-white px-3 py-2 text-sm"
               >
                 <option value="">All resumes</option>
 
@@ -389,7 +390,7 @@ function Screenings() {
                           onClick={() =>
                             viewScreening(screening.id)
                           }
-                          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm hover:bg-gray-50"
+                          className="rounded-md border border-[#d9dfd8] px-3 py-1.5 text-xs font-bold text-[#52636a] hover:bg-[#edf3e7]"
                         >
                           View
                         </button>
@@ -411,13 +412,13 @@ function Screenings() {
           </div>
 
           {/* Details */}
-          <div className="rounded-xl bg-white p-6 shadow-sm">
+          <div className="border border-[#e1e4dd] bg-[#fbfbf7] p-6 sm:p-8">
             <h2 className="mb-5 text-lg font-semibold">
               Screening Details
             </h2>
 
             {!selectedScreening ? (
-              <div className="flex h-64 items-center justify-center rounded-lg border border-dashed border-gray-300">
+              <div className="flex h-64 items-center justify-center rounded-lg border border-dashed border-[#cfd8ce] bg-white">
                 <p className="text-sm text-gray-400">
                   Select a screening result to view it.
                 </p>
@@ -425,7 +426,7 @@ function Screenings() {
             ) : (
               <div>
                 <div className="mb-5 grid grid-cols-2 gap-4">
-                  <div className="rounded-lg bg-gray-50 p-4">
+                  <div className="rounded-lg bg-[#edf3e7] p-4">
                     <p className="text-xs text-gray-400">
                       Resume ID
                     </p>
@@ -435,7 +436,7 @@ function Screenings() {
                     </p>
                   </div>
 
-                  <div className="rounded-lg bg-gray-50 p-4">
+                  <div className="rounded-lg bg-[#edf3e7] p-4">
                     <p className="text-xs text-gray-400">
                       Job ID
                     </p>
@@ -458,7 +459,7 @@ function Screenings() {
                   onChange={(e) =>
                     setEditScore(e.target.value)
                   }
-                  className="mb-4 w-full rounded-lg border border-gray-300 px-3 py-2.5 outline-none focus:border-black"
+                  className="mb-4 w-full rounded-lg border border-[#d9dfd8] bg-white px-3 py-2.5 outline-none focus:border-[#9fca4e] focus:ring-2 focus:ring-[#c8f36a]/40"
                 />
 
                 <label className="mb-2 block text-sm font-medium text-gray-700">
@@ -471,12 +472,12 @@ function Screenings() {
                     setEditReason(e.target.value)
                   }
                   rows={8}
-                  className="w-full resize-none rounded-lg border border-gray-300 bg-gray-50 p-4 text-sm outline-none focus:border-black"
+                  className="w-full resize-none rounded-lg border border-[#d9dfd8] bg-white p-4 text-sm outline-none focus:border-[#9fca4e] focus:ring-2 focus:ring-[#c8f36a]/40"
                 />
 
                 <button
                   onClick={updateScreening}
-                  className="mt-4 w-full rounded-lg bg-black px-4 py-2.5 text-sm font-medium text-white hover:bg-gray-800"
+                  className="mt-4 w-full rounded-lg bg-[#15222c] px-4 py-2.5 text-sm font-bold text-white hover:bg-[#273944]"
                 >
                   Update Screening
                 </button>
