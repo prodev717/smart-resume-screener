@@ -244,3 +244,18 @@ export const jobDescriptionSchema = {
 
   required: ["is_job_description", "job"],
 };
+
+
+
+export const screeningSchema = {
+  type: "object",
+  properties: {
+    score: {
+      type: "integer",
+    },
+    reason: {
+      type: "string",
+    },
+  },
+  required: ["score", "reason"],
+};
