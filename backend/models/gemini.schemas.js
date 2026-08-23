@@ -113,3 +113,134 @@ export const resumeSchema = {
   },
   required: ['is_resume', 'candidate'],
 };
+
+
+
+export const jobDescriptionSchema = {
+  type: "object",
+  properties: {
+    is_job_description: {
+      type: "boolean",
+    },
+
+    job: {
+      type: ["object", "null"],
+      properties: {
+        title: {
+          type: "string",
+        },
+
+        company: {
+          type: "string",
+        },
+
+        location: {
+          type: "string",
+        },
+
+        employment_type: {
+          type: "string",
+        },
+
+        work_mode: {
+          type: "string",
+        },
+
+        experience_required: {
+          type: "string",
+        },
+
+        salary: {
+          type: "string",
+        },
+
+        summary: {
+          type: "string",
+        },
+
+        responsibilities: {
+          type: "array",
+          items: { type: "string" },
+        },
+
+        required_skills: {
+          type: "array",
+          items: { type: "string" },
+        },
+
+        preferred_skills: {
+          type: "array",
+          items: { type: "string" },
+        },
+
+        required_qualifications: {
+          type: "array",
+          items: { type: "string" },
+        },
+
+        preferred_qualifications: {
+          type: "array",
+          items: { type: "string" },
+        },
+
+        education: {
+          type: "array",
+          items: { type: "string" },
+        },
+
+        certifications: {
+          type: "array",
+          items: { type: "string" },
+        },
+
+        soft_skills: {
+          type: "array",
+          items: { type: "string" },
+        },
+
+        benefits: {
+          type: "array",
+          items: { type: "string" },
+        },
+
+        keywords: {
+          type: "array",
+          items: { type: "string" },
+        },
+
+        application_deadline: {
+          type: "string",
+        },
+
+        application_url: {
+          type: "string",
+        },
+      },
+
+      required: [
+        "title",
+        "company",
+        "location",
+        "employment_type",
+        "work_mode",
+        "experience_required",
+        "salary",
+        "summary",
+        "responsibilities",
+        "required_skills",
+        "preferred_skills",
+        "required_qualifications",
+        "preferred_qualifications",
+        "education",
+        "certifications",
+        "soft_skills",
+        "benefits",
+        "keywords",
+        "application_deadline",
+        "application_url",
+      ],
+    },
+  },
+
+  required: ["is_job_description", "job"],
+};

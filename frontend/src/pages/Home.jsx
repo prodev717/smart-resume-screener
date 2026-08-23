@@ -25,6 +25,13 @@ function Home() {
             Go to Resume Manager
             <span className="ml-2">→</span>
           </NavLink>
+          <NavLink
+            to="/job-descriptions"
+            className="ml-4 inline-flex items-center rounded-lg bg-gray-100 px-6 py-3 text-sm font-semibold text-gray-900 transition hover:bg-gray-200"
+          >
+            Go to Job Description Manager
+            <span className="ml-2">→</span>
+          </NavLink>
         </div>
       </div>
     </div>

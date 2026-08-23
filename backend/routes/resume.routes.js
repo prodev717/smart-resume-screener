@@ -9,20 +9,20 @@ import {
   deleteResume,
 } from "../controllers/resume.controller.js";
 
-const router = express.Router();
+const resumeRoutes = express.Router();
 
-router.post(
+resumeRoutes.post(
   "/",
   upload.array("files", 20),
   createResumes
 );
 
-router.get("/", getResumes);
+resumeRoutes.get("/", getResumes);
 
-router.get("/:id", getResume);
+resumeRoutes.get("/:id", getResume);
 
-router.put("/:id", updateResume);
+resumeRoutes.put("/:id", updateResume);
 
-router.delete("/:id", deleteResume);
+resumeRoutes.delete("/:id", deleteResume);
 
-export default router;
+export default resumeRoutes;
