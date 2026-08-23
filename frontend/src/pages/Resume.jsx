@@ -187,6 +187,10 @@ function Resume() {
             </p>
           )}
 
+          <label className="mt-3 block text-sm text-gray-500">
+            You can upload up to 20 resumes at a time.
+          </label>
+
           {message && (
             <p className="mt-4 rounded-lg bg-gray-50 p-3 text-sm text-gray-600">
               {message}

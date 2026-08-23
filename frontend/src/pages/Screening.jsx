@@ -12,12 +12,16 @@ function Screenings() {
 
   const [resumeId, setResumeId] = useState("");
   const [jdId, setJdId] = useState("");
+  const [filterResumeId, setFilterResumeId] = useState("");
+  const [filterJdId, setFilterJdId] = useState("");
 
   const [selectedScreening, setSelectedScreening] = useState(null);
   const [editScore, setEditScore] = useState("");
   const [editReason, setEditReason] = useState("");
 
   const [loading, setLoading] = useState(false);
+  const [batchLoading, setBatchLoading] = useState(false);
+  const [batchProgress, setBatchProgress] = useState(null);
   const [message, setMessage] = useState("");
 
   // Fetch resumes and job descriptions
@@ -49,24 +53,10 @@ function Screenings() {
     }
   };
 
-  // GET screenings with optional filters
+  // Always load the complete set; filters are applied locally below.
   const fetchScreenings = async () => {
     try {
-      const params = new URLSearchParams();
-
-      if (resumeId) {
-        params.append("resume_id", resumeId);
-      }
-
-      if (jdId) {
-        params.append("jd_id", jdId);
-      }
-
-      const url = params.toString()
-        ? `${SCREENING_API}?${params.toString()}`
-        : SCREENING_API;
-
-      const response = await fetch(url);
+      const response = await fetch(SCREENING_API);
       const data = await response.json();
 
       setScreenings(data.screenings || []);
@@ -74,6 +64,64 @@ function Screenings() {
       console.error(error);
       setMessage("Failed to fetch screenings");
     }
+  };
+
+  const filteredScreenings = screenings.filter((screening) => {
+    const matchesResume = !filterResumeId || String(screening.resume_id) === filterResumeId;
+    const matchesJob = !filterJdId || String(screening.jd_id) === filterJdId;
+    return matchesResume && matchesJob;
+  }).sort((first, second) => Number(second.score) - Number(first.score));
+
+  const screenAllUnscreened = async () => {
+    if (!jdId) {
+      setMessage("Select a job description first");
+      return;
+    }
+
+    const screenedResumeIds = new Set(
+      screenings
+        .filter((screening) => String(screening.jd_id) === String(jdId))
+        .map((screening) => String(screening.resume_id))
+    );
+    const pendingResumes = resumes.filter(
+      (resume) => !screenedResumeIds.has(String(resume.id))
+    );
+
+    if (pendingResumes.length === 0) {
+      setMessage("All resumes have already been screened for this job");
+      return;
+    }
+
+    setBatchLoading(true);
+    setBatchProgress({ completed: 0, total: pendingResumes.length, failed: 0 });
+    setMessage("");
+    let failed = 0;
+
+    for (let index = 0; index < pendingResumes.length; index += 1) {
+      try {
+        const response = await fetch(SCREENING_API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            resume_id: Number(pendingResumes[index].id),
+            jd_id: Number(jdId),
+          }),
+        });
+
+        if (!response.ok) {
+          failed += 1;
+        }
+      } catch (error) {
+        console.error(error);
+        failed += 1;
+      }
+
+      setBatchProgress({ completed: index + 1, total: pendingResumes.length, failed });
+    }
+
+    await fetchScreenings();
+    setBatchLoading(false);
+    setMessage(failed ? `Batch screening finished with ${failed} failure(s)` : `Screened ${pendingResumes.length} resume(s) successfully`);
   };
 
   // POST - AI screening
@@ -272,11 +320,26 @@ function Screenings() {
 
           <button
             onClick={createScreening}
-            disabled={loading}
+            disabled={loading || batchLoading}
               className="mt-5 rounded-lg bg-[#15222c] px-5 py-2.5 text-sm font-bold text-white hover:bg-[#273944] disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Screening..." : "Run AI Screening"}
           </button>
+
+          <button
+            onClick={screenAllUnscreened}
+            disabled={!jdId || loading || batchLoading}
+            className="ml-2 mt-5 rounded-lg border border-[#c9d3c8] bg-[#edf3e7] px-5 py-2.5 text-sm font-bold text-[#526e3e] hover:bg-[#e2f5b7] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {batchLoading ? "Processing batch..." : "Screen all unscreened"}
+          </button>
+
+          {batchProgress && (
+            <p className="mt-3 text-xs font-semibold text-[#718087]">
+              Batch progress: {batchProgress.completed}/{batchProgress.total}
+              {batchProgress.failed ? ` (${batchProgress.failed} failed)` : ""}
+            </p>
+          )}
 
           {message && (
             <p className="mt-4 text-sm text-gray-600">
@@ -285,7 +348,7 @@ function Screenings() {
           )}
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="flex flex-col gap-6">
 
           {/* Screening List */}
             <div className="border border-[#e1e4dd] bg-[#fbfbf7] p-6 sm:p-8">
@@ -307,11 +370,8 @@ function Screenings() {
             <div className="mb-5 grid gap-3 sm:grid-cols-2">
 
               <select
-                value={resumeId}
-                onChange={(e) => {
-                  setResumeId(e.target.value);
-                  setTimeout(fetchScreenings, 0);
-                }}
+                value={filterResumeId}
+                onChange={(e) => setFilterResumeId(e.target.value)}
                               className="rounded-lg border border-[#d9dfd8] bg-white px-3 py-2 text-sm"
               >
                 <option value="">All resumes</option>
@@ -324,11 +384,8 @@ function Screenings() {
               </select>
 
               <select
-                value={jdId}
-                onChange={(e) => {
-                  setJdId(e.target.value);
-                  setTimeout(fetchScreenings, 0);
-                }}
+                value={filterJdId}
+                onChange={(e) => setFilterJdId(e.target.value)}
                 className="rounded-lg border border-gray-300 px-3 py-2 text-sm"
               >
                 <option value="">All jobs</option>
@@ -342,13 +399,24 @@ function Screenings() {
               </select>
             </div>
 
-            {screenings.length === 0 ? (
+            {filteredScreenings.length === 0 ? (
               <p className="text-sm text-gray-500">
-                No screening results found.
+                {screenings.length === 0 ? "No screening results found." : "No results match the selected filters."}
               </p>
             ) : (
-              <div className="space-y-3">
-                {screenings.map((screening) => {
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[680px] border-collapse text-left">
+                  <thead>
+                    <tr className="border-b border-[#dfe3dc] text-[10px] font-bold uppercase tracking-[0.14em] text-[#82908e]">
+                      <th className="px-3 py-3">Candidate</th>
+                      <th className="px-3 py-3">Role</th>
+                      <th className="px-3 py-3">Score</th>
+                      <th className="px-3 py-3">Reason</th>
+                      <th className="px-3 py-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                {filteredScreenings.map((screening) => {
 
                   const resume = resumes.find(
                     (r) => r.id === screening.resume_id
@@ -359,33 +427,29 @@ function Screenings() {
                   );
 
                   return (
-                    <div
-                      key={screening.id}
-                      className="rounded-lg border border-gray-200 p-4"
-                    >
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <p className="font-medium text-gray-900">
+                    <tr key={screening.id} className="border-b border-[#e5e8e1] align-top last:border-0 hover:bg-white">
+                      <td className="px-3 py-4">
+                        <p className="font-bold text-[#15222c]">
                             {resume?.resume?.name ||
                               `Resume #${screening.resume_id}`}
-                          </p>
-
-                          <p className="text-sm text-gray-500">
+                        </p>
+                        <p className="mt-1 text-xs text-[#9aa49e]">ID: {screening.resume_id}</p>
+                      </td>
+                      <td className="px-3 py-4">
+                        <p className="text-sm font-semibold text-[#52636a]">
                             {job?.job_description?.title ||
                               `JD #${screening.jd_id}`}
-                          </p>
-                        </div>
-
-                        <div className="rounded-full bg-gray-100 px-3 py-1 text-sm font-semibold">
+                        </p>
+                        <p className="mt-1 text-xs text-[#9aa49e]">ID: {screening.jd_id}</p>
+                      </td>
+                      <td className="px-3 py-4">
+                        <span className="inline-flex rounded-full bg-[#e2f5b7] px-3 py-1 text-sm font-bold text-[#526e3e]">
                           {screening.score}/10
-                        </div>
-                      </div>
-
-                      <p className="mt-3 line-clamp-2 text-sm text-gray-600">
-                        {screening.reason}
-                      </p>
-
-                      <div className="mt-4 flex gap-2">
+                        </span>
+                      </td>
+                      <td className="max-w-[280px] px-3 py-4 text-sm leading-5 text-[#66747a]">{screening.reason}</td>
+                      <td className="px-3 py-4">
+                        <div className="flex justify-end gap-2">
                         <button
                           onClick={() =>
                             viewScreening(screening.id)
@@ -403,10 +467,13 @@ function Screenings() {
                         >
                           Delete
                         </button>
-                      </div>
-                    </div>
+                        </div>
+                      </td>
+                    </tr>
                   );
                 })}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
