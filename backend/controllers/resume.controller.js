@@ -2,7 +2,7 @@ import Resume from "../models/resume.model.js";
 import { resumeSchema } from "../models/gemini.schemas.js";
 import { GoogleGenAI } from "@google/genai";
 import multer from "multer";
-import { PDFParse } from "pdf-parse";
+import pdfParse from "pdf-parse";
 import "dotenv/config";
 
 const ai = new GoogleGenAI();
@@ -49,15 +49,13 @@ ${text}
 
 async function extractText(file) {
   if (file.mimetype === "application/pdf") {
-    const parser = new PDFParse({
-      data: file.buffer,
-    });
 
     try {
-      const data = await parser.getText();
+      const data = await pdfParse(file.buffer);
       return data.text;
-    } finally {
-      await parser.destroy();
+    }catch (error) {
+      console.error(`Failed to parse PDF ${file.originalname}:`, error);
+      return null;
     }
   }
 
