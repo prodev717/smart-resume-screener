@@ -71,7 +71,7 @@ The server enables CORS for all origins and parses JSON request bodies with Expr
 
 ### `GET /health`
 
-Return a lightweight liveness response without querying the database or Gemini.
+Check the server, PostgreSQL database, and Gemini availability.
 
 ```bash
 curl http://localhost:3000/health
@@ -81,11 +81,16 @@ Success (`200 OK`):
 
 ```json
 {
-  "status": "ok"
+  "status": "ok",
+  "checks": {
+    "server": { "status": "ok" },
+    "database": { "status": "ok" },
+    "gemini": { "status": "ok" }
+  }
 }
 ```
 
-The endpoint is useful for confirming that the Node.js process is accepting HTTP requests. It does not verify database connectivity, Gemini availability, or the readiness of dependent services.
+The endpoint returns `503 Service Unavailable` when the server is running but either the database or Gemini check fails. The response keeps the same shape and marks failed checks with `"status": "error"`.
 
 ## Architecture
 
