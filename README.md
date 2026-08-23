@@ -4,6 +4,13 @@ HireLens is an AI-assisted hiring workspace for turning resumes and job descript
 
 The application is designed for a small recruiting workflow: upload a batch of resumes, create one or more job descriptions, run individual or sequential batch screenings, and review the highest-scoring candidates in a responsive dashboard.
 
+## Live deployment
+
+- Frontend: [https://hirelens-v1.vercel.app](https://hirelens-v1.vercel.app)
+- Backend API: [https://hire-lens-api.vercel.app](https://hire-lens-api.vercel.app)
+
+The deployed frontend should use the backend URL above as its `VITE_BACKEND_URL` environment variable. The backend health check is available at [https://hire-lens-api.vercel.app/health](https://hire-lens-api.vercel.app/health).
+
 ## Contents
 
 - [Project overview](#project-overview)
@@ -11,6 +18,7 @@ The application is designed for a small recruiting workflow: upload a batch of r
 - [Architecture](#architecture)
 - [Repository structure](#repository-structure)
 - [Technology stack](#technology-stack)
+- [Live deployment](#live-deployment)
 - [Local setup](#local-setup)
 - [Configuration](#configuration)
 - [Application workflows](#application-workflows)
