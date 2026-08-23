@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { JobEditor } from "../components/StructuredEditors";
 
 const API_URL = (import.meta.env.VITE_BACKEND_URL || "http://localhost:3000") + "/api/job-descriptions";
 
@@ -6,7 +7,6 @@ function JobDescriptions() {
   const [text, setText] = useState("");
   const [jobs, setJobs] = useState([]);
   const [selectedJob, setSelectedJob] = useState(null);
-  const [editText, setEditText] = useState("");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -75,9 +75,6 @@ function JobDescriptions() {
       }
 
       setSelectedJob(data.job);
-      setEditText(
-        JSON.stringify(data.job.job_description, null, 2)
-      );
     } catch (error) {
       console.error(error);
       setMessage(error.message);
@@ -89,15 +86,6 @@ function JobDescriptions() {
     if (!selectedJob) return;
 
     try {
-      let parsedJob;
-
-      try {
-        parsedJob = JSON.parse(editText);
-      } catch {
-        setMessage("Invalid JSON");
-        return;
-      }
-
       const response = await fetch(
         `${API_URL}/${selectedJob.id}`,
         {
@@ -106,7 +94,7 @@ function JobDescriptions() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            job: parsedJob,
+            job: selectedJob.job_description,
           }),
         }
       );
@@ -118,9 +106,6 @@ function JobDescriptions() {
       }
 
       setSelectedJob(data.job);
-      setEditText(
-        JSON.stringify(data.job.job_description, null, 2)
-      );
 
       setMessage("Job description updated successfully");
 
@@ -152,7 +137,6 @@ function JobDescriptions() {
 
       if (selectedJob?.id === id) {
         setSelectedJob(null);
-        setEditText("");
       }
 
       fetchJobs();
@@ -298,11 +282,11 @@ function JobDescriptions() {
                   </p>
                 </div>
 
-                <textarea
-                  value={editText}
-                  onChange={(e) => setEditText(e.target.value)}
-                  rows={18}
-                  className="w-full resize-none rounded-lg border border-[#d9dfd8] bg-white p-4 font-mono text-xs outline-none focus:border-[#9fca4e] focus:ring-2 focus:ring-[#c8f36a]/40"
+                <JobEditor
+                  job={selectedJob.job_description}
+                  onChange={(job) =>
+                    setSelectedJob({ ...selectedJob, job_description: job })
+                  }
                 />
 
                 <button

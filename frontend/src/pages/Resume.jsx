@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { ResumeEditor } from "../components/StructuredEditors";
 
 const API_URL = (import.meta.env.VITE_BACKEND_URL || "http://localhost:3000") + "/api/resumes";
 
@@ -277,23 +278,11 @@ function Resume() {
                   </p>
                 </div>
 
-                <textarea
-                  value={JSON.stringify(
-                    selectedResume.resume,
-                    null,
-                    2
-                  )}
-                  onChange={(e) => {
-                    try {
-                      setSelectedResume({
-                        ...selectedResume,
-                        resume: JSON.parse(e.target.value),
-                      });
-                    } catch {
-                      // Allow temporarily invalid JSON
-                    }
-                  }}
-                  className="h-96 w-full resize-none rounded-lg border border-[#d9dfd8] bg-white p-4 font-mono text-sm outline-none focus:border-[#9fca4e] focus:ring-2 focus:ring-[#c8f36a]/40"
+                <ResumeEditor
+                  resume={selectedResume.resume}
+                  onChange={(resume) =>
+                    setSelectedResume({ ...selectedResume, resume })
+                  }
                 />
 
                 <button
