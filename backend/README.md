@@ -1,4 +1,4 @@
-# Smart Resume Screener Backend
+# HireLens Backend
 
 Express and PostgreSQL API for extracting structured resume and job-description data with Google Gemini, storing the results as JSONB, and evaluating resume/job matches.
 
