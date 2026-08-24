@@ -11,11 +11,11 @@ The application is designed for a small recruiting workflow: upload a batch of r
 
 The deployed frontend should use the backend URL above as its `VITE_BACKEND_URL` environment variable. The backend health check is available at [https://hire-lens-api.vercel.app/health](https://hire-lens-api.vercel.app/health).
 
-## Demo video
+## Demo Video
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/pV78gdyEHRw" title="HireLens demo video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+[![HireLens Demo](https://img.youtube.com/vi/pV78gdyEHRw/maxresdefault.jpg)](https://www.youtube.com/watch?v=pV78gdyEHRw)
 
-- YouTube: [https://www.youtube.com/watch?v=pV78gdyEHRw](https://www.youtube.com/watch?v=pV78gdyEHRw)
+[Watch the demo on YouTube](https://www.youtube.com/watch?v=pV78gdyEHRw)
 
 ## Contents
 
